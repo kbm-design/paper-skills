@@ -117,6 +117,30 @@ import {wipe} from '@remotion/transitions/wipe';
 
 Map board `transitionIn.kind` → presentation: `cut` (no Transition element), `fade` → `fade()`, `slide-left/right/up/down` → `slide({direction})`, `wipe` → `wipe()`. Transitions *overlap* sequences — subtract overlap frames when computing total duration. Default transition duration: the scale's `base`.
 
+### Morph transitions — when the product has its own reveal
+
+`@remotion/transitions` presentations are generic by design; a reel cut entirely with `fade`/`slide` reads like a template. When the product has a signature reveal (a panel that opens from a bar, a card that expands to full screen, a tray that slides from an edge), **build the transition from that instead** — it's the single biggest difference between a demo that looks bought and one that looks like the product.
+
+The pattern, which needs no `TransitionSeries` at all:
+
+1. Use a plain `<Series>`. Each scene owns its own morph in and out — there are **no overlaps**, so total duration is the plain sum of scene durations.
+2. Every scene renders the *same* morphing container: a box interpolating between the resting state (e.g. a collapsed capsule) and the open panel — width, height, and per-corner radius all lerped by one `0→1` progress value.
+3. Progress is `expandT × (1 − collapseT)` — expand at the head of the scene, collapse at the tail.
+4. Cross-fade two faces inside that container: the resting-state face out, the panel face in.
+5. **Adjacent scenes must land on an identical container state.** Scene N collapses to exactly what scene N+1 expands from, so the hard cut between sequences is invisible and the whole reel reads as one continuous object.
+
+```tsx
+const p = expandT * (1 - collapseT);               // 0 = resting, 1 = open
+const w = lerp(CAP.w * S, panel.w * S, p);
+const h = lerp(CAP.h * S, panel.h * S, p);
+const restingOpacity = interpolate(p, [0, 0.18], [1, 0], {extrapolateRight: 'clamp'});
+const panelOpacity   = interpolate(p, [0.3, 0.75], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+```
+
+**Tune the content fade against the geometry, not after it.** If the panel's contents only appear once the box has finished opening, you get several frames of an empty box — reads as a stall. Contents should be fading in while the box is still growing (note the `0.3–0.75` window above, not `0.55–0.9`). Verify this specific thing with a still taken *mid-morph*, not at the scene midpoint.
+
+Anchor the container the way the real UI is anchored (an element that hangs from the top of the screen keeps `top: 0` and grows downward), and let one continuous camera push run across the *whole* composition rather than per-scene moves — per-scene pushes re-trigger on every cut and read as jumps.
+
 ## 5. Assets & fonts
 
 - Export needed images/SVGs from Paper (`export`, 2x) into `video/public/`; reference via `staticFile()`. Never hotlink.
@@ -152,3 +176,33 @@ Cutdown layout rule: keep critical content in a **center safe area** so one scen
 - Render cost is real: a 15–30s reel takes minutes; stills take seconds. That's why the loop is stills-first.
 - Tailwind lane must match the installed Remotion major (v4 lane ≥4.0.256).
 - Respect `prefers-reduced-motion` where the reel embeds on the web (note in handoff); for MP4 output it's N/A.
+
+## 9. Gotchas that cost real time
+
+Each of these was hit on a live build. Check them before debugging from scratch.
+
+**Scaffold**
+
+- **`tsconfig.json` is required.** Remotion errors out with "Could not find a tsconfig.json file in your project" — `npm init` doesn't create one. Write it before the first `still`.
+- **zod must be Remotion's exact version.** A plain `npm i zod` gets rejected ("install exact version X"). Run `npx remotion add zod` and let it pin.
+- **`"sideEffects": false` in package.json kills the CSS.** Change it to `["*.css"]` or Tailwind silently doesn't load.
+
+**Tailwind v4 vs v3 — the silent one**
+
+- CSS variables in arbitrary values need the **`var()` wrapper** in v4: `bg-[var(--surface)]`, not v3's `bg-[--surface]`. The v3 form doesn't error — it produces **no style at all**, so a dark reel renders on a white stage and every token color falls back to browser defaults. If a still comes back white or unstyled, check this first.
+
+**Paper assets**
+
+- **`export` writes to `~/Downloads` using the node's display name** — spaces, em-dashes, slashes included. Those paths break `paper-asset://` references and `staticFile()`. Copy to safe filenames (`gw-thumb-agents.png`) before referencing them.
+- **`<img>` in `write_html` needs explicit width *and* height.** `height: auto` collapses the element to zero — it renders as an empty box with no error. Compute the real aspect and set both.
+
+**Animation**
+
+- Content that fades in only *after* a morph completes reads as a stall — overlap it with the geometry (see §4).
+- `spring()` with a high `damping` and no `stiffness` is very slow to settle; pass both (`{damping: 200, stiffness: 160}`) when a move needs to land inside a short scene.
+- Removing an unused `spring()`/`interpolate()` is free, but removing the variable it fed without removing its use is a render-time crash — the still command surfaces it immediately, which is another reason to still early.
+
+**Verification**
+
+- Stills are cheap and renders are not: 11 stills took seconds, the 12s render took minutes. When in doubt, add stills.
+- A still at a scene *midpoint* will not catch a broken transition. Take stills at morph/transition midpoints explicitly — most defects live there.

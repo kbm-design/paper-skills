@@ -105,6 +105,24 @@ const storyboard = z.discriminatedUnion('profile', [
 - After a successful downstream render, the consumer stamps the board status chip; on compile, this skill stamps `compiled <date>`.
 - One board = one profile. To serve both a video and a deck from the same scenes, keep the core the same and compile twice with different profile blocks (two JSON files).
 
+## Building the board — two gotchas that cost a pass
+
+Both produce an **empty box with no error**, so they look like a rendering delay and get "fixed" by re-exporting, which changes nothing.
+
+**1. Exported thumbnails need safe filenames.** `export` writes to `~/Downloads` using the node's *display name* — `Agents tab — baseline` becomes a filename with spaces and an em-dash, and those paths break `paper-asset://` silently. Copy to safe names before referencing:
+
+```bash
+cp "Agents tab — baseline.png" board-thumb-agents.png
+```
+
+**2. `<img>` needs explicit width AND height.** `height: auto` collapses the element to zero. Read the node's real dimensions and set both:
+
+```html
+<img src="paper-asset:///abs/path/board-thumb-agents.png" style="width: 278px; height: 142px;" />
+```
+
+To tell a blank thumbnail apart from a slow one, screenshot the card at `scale: 2`, or call `get_fill_image` on the image node — if it returns the picture, the asset loaded and the geometry is what's wrong.
+
 ## Log
 
 `.kbm/storyboard.md`: one entry per board — artboard name, profile(s) compiled, JSON path(s), pending edits. Read at start, write at end; hand-edits are instructions.
