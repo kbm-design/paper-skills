@@ -46,6 +46,7 @@ For `title`-type scenes (no `src`), compose from tokens: the wordmark/headline a
 ## 4. Building
 
 - One artboard per scene: `create_artboard` named `KBM/slide <n> — <title>`, sized to the board's `page` (default `1920×1080`).
+- **Place slides in a deliberate left-to-right row as you build — do not trust auto-placement.** `create_artboard` drops each new artboard into "the best empty spot," which scatters slides across rows out of scene order. `export_combined_pdf` then orders pages by **canvas position** (top-to-bottom, then left-to-right), *not* by the node order you pass it — so scattered slides export as a mis-ordered deck. After creating each artboard, set its position with `update_styles` (`top`/`left` on an artboard move it on the canvas): pick one `top` for the whole row and step `left` by `page-width + ~200` per slide, in scene order. Then canvas order == scene order and the PDF is correct.
 - Build incrementally — one visual group per `write_html` call (frame slot, then title, then caption). The user watches it assemble.
 - Use flex, padding, and gap. No margin, no grid, no tables.
 - After 3+ slides, screenshot and trace vertical/horizontal lanes: titles must share a baseline, frames must share a scale and center line.
@@ -71,7 +72,7 @@ export_combined_pdf   → the deck, artboards in scene order (the primary delive
 export (png, 2x)      → per-slide images for embedding elsewhere (offer, don't assume)
 ```
 
-Confirm the artboard order matches scene order before exporting — the PDF follows canvas order, not creation order. Then `finish_working_on_nodes`.
+Confirm the artboard order matches scene order before exporting — the PDF follows canvas position (top-to-bottom, then left-to-right), not the node order passed or the creation order. If you laid the slides in a single scene-ordered row (§4), this is already correct; if not, reposition them first. **Verify the result**: `Read` the exported PDF and check the pages are in scene order — the export tool reports success even when the order is wrong. Then `finish_working_on_nodes`.
 
 ## 7. Log
 
