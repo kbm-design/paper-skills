@@ -1,77 +1,59 @@
 # Paper Skills
 
-Ten skills for [Paper](https://paper.design), the design canvas — built on the Paper MCP server.
+Ten skills for designing in [Paper](https://paper.design) with an agent.
 
-Paper is good at being a canvas. These skills are about everything around it: getting real data and real code *onto* the canvas, doing structured work *on* it, and turning finished designs *into* the things you actually ship — videos, decks, Lottie files, Rive assets, live interactive pages.
+I've been working in Paper for a while now. The MCP server is good. An agent can read your file, understand the structure, and write real nodes back to the canvas. But pointed at a design file without guidance, agents make the same handful of mistakes every time. They rebuild a component by hand in HTML instead of cloning the node you already made. They pull a color off a screenshot instead of asking for the computed value. They render a video and tell you it looks right without having looked at a single frame of it. They quietly swap your copy for lorem.
 
-They compose. The canvas stays the source of truth; the skills read from it and write back to it.
+These skills are the guardrails against that, plus the pipelines I got tired of rebuilding by hand.
 
 ## Install
 
 ```
-/plugin marketplace add <your-org>/paper-skills
+/plugin marketplace add kbm-design/paper-skills
 /plugin install paper
 ```
 
-Skills then invoke as `paper:storyboard`, `paper:design-council`, and so on — or they trigger on their own when what you're doing matches.
-
-**Requires:** Paper Desktop running with a file open, and the Paper MCP server connected. Individual skills note any extra requirements (Node for `product-demo`, a connected Linear/Notion MCP for `canvas-views`).
+Skills invoke as `paper:storyboard`, `paper:design-council`, and so on, or they trigger on their own when what you're doing matches. You need Paper Desktop running with a file open.
 
 ## The skills
 
-Organized by direction of travel.
+Grouped by which way the work is moving.
 
-### → Into Paper
+**Into Paper**
 
-| skill | what it does |
-|---|---|
-| **canvas-views** | Renders external systems onto the canvas as designed views — a Linear sprint as a status board, a Notion roadmap as lanes, a repo as an architecture map. Read-only: the source system stays the record, the canvas is the lens. |
-| **paper-live-components** | Mirrors real components from a codebase onto the canvas as token-bound islands. Extracts your theme into Paper tokens, renders faithful variant matrices, and pushes prop edits back to code. "Paper Dev Mode." |
+- `canvas-views` — renders an external system onto the canvas as a designed view. A Linear sprint as a status board, a Notion roadmap as lanes, a repo as an architecture map. Read-only, so the source system stays the record and the canvas is just the lens.
+- `paper-live-components` — mirrors real components from a codebase onto the canvas as token-bound islands, then pushes prop edits back to code.
 
-### ↻ Within Paper
+**Working in Paper**
 
-| skill | what it does |
-|---|---|
-| **storyboard** | Plans a sequence of scenes as cards on the canvas, gets your approval, and compiles a typed `storyboard.json`. Renderer-agnostic — it's the shared front end for `product-demo` and `pitch-deck`. |
-| **design-council** | Five reviewer personas (accessibility, systems, content, first-time user, design lead) audit a frame with measured evidence, pin annotated findings on the canvas, and deliver a fixed side-by-side duplicate. |
+- `storyboard` — plans a sequence of scenes as cards on the canvas, waits for you to approve it, then compiles a typed `storyboard.json`.
+- `design-council` — five reviewer personas audit a frame with measured evidence, pin their findings on the canvas, and hand back a fixed side-by-side duplicate.
 
-### → Out of Paper
+**Out of Paper**
 
-| skill | what it does |
-|---|---|
-| **product-demo** | Compiles an approved storyboard into a Remotion composition that animates your *actual* frames — real JSX, real tokens, real copy — verifies with rendered stills, and outputs MP4 with cutdowns. |
-| **pitch-deck** | Turns an approved storyboard into slides: one artboard per scene, each a real frame with a title and a caption saying what's going on. Exports a combined PDF. |
-| **paper-interaction-preview** | Takes selected components and builds a live interactive HTML page with hover/press/focus motion applied — an accumulating interaction reference for your design system. |
-| **paper-to-lottie** | Turns vector elements into animated Lottie assets by generating Lottie JSON directly. No Lottie editor in the loop. |
-| **paper-to-rive** | Rebuilds designs as interactive Rive assets — layouts, vectors, text, state machines with hover/press/pointer states. |
-| **paper-shaders** | Works with Paper's shader fills and effects. |
+- `product-demo` — turns an approved storyboard into a Remotion video that animates your actual frames, as JSX, using the tokens and copy already in the file.
+- `pitch-deck` — turns the same kind of storyboard into slides. One artboard per scene, each a real frame with a caption saying what it does. Exports a PDF.
+- `paper-interaction-preview` — takes selected components and builds a live HTML page where you can actually feel the hover and press states.
+- `paper-to-lottie` — writes Lottie JSON directly from vector elements. No Lottie editor in the loop.
+- `paper-to-rive` — rebuilds designs as Rive assets, including state machines with pointer states.
+- `paper-shaders` — works with Paper's shader fills and effects.
 
-## How they compose
+## How storyboard fits
 
-```
-                    ┌─────────────┐
-                    │ storyboard  │  plan scenes on canvas → storyboard.json
-                    └──────┬──────┘
-                    ┌──────┴───────┐
-                    ▼              ▼
-            ┌──────────────┐  ┌────────────┐
-            │ product-demo │  │ pitch-deck │   video          slides
-            └──────────────┘  └────────────┘
-```
+`storyboard` is the front half of both `product-demo` and `pitch-deck`. It compiles a small renderer-agnostic core for every scene, plus one profile block: `video` adds timing and transitions, `deck` adds captions and layout.
 
-`storyboard` compiles a small renderer-agnostic core (`n`, `type`, `src`, `copy`, `notes`) plus one **profile** block — `video` adds timing/transitions/motion, `deck` adds captions and layout. Same board, two outputs: compile it twice.
+Which means one approved board can render twice. Same scenes, same copy, once as a launch video and once as the deck you talk over. Compile it with each profile.
 
-`paper-live-components` and `paper-interaction-preview` pair up — one mirrors components in from code, the other makes them feel real in the browser.
+The board on the canvas stays the source of truth. Edit a card and recompile; nothing patches the JSON by hand.
 
-## Conventions
+## What they have in common
 
-Every skill here follows the same house rules, which is most of why they work:
+Four rules run through all of them, and they're doing most of the work:
 
-- **The canvas is the source of truth.** Compiled artifacts (JSON, JSX, slides) are generated *from* it and regenerated when it changes — never hand-patched to match.
-- **Stop for approval before expensive work.** Anything that takes minutes to produce gets a cheap plan you can edit first.
-- **Verify visually, and actually look.** Screenshot or render a still and read it before claiming something works.
-- **Copy ships verbatim.** Placeholder text is a blocker, not a detail to fix later.
-- **Use the product's own tokens.** Read real values off the design; never fall back to framework defaults.
+- The canvas is the source of truth. Anything compiled out of it gets regenerated when it changes.
+- Nothing expensive runs before you approve something cheap. Editing a storyboard card takes seconds. A video render takes minutes.
+- Look at the output. Screenshot it, render a still, actually read the image before saying it works.
+- Copy ships exactly as written on the canvas, and colors come from your file rather than a framework default. Lorem anywhere is a blocker, not something to tidy up later.
 
 ## License
 
