@@ -1,0 +1,10 @@
+{
+  "name": "paper",
+  "description": "Skills for working with Paper (paper.design) via the Paper MCP — get data and code onto the canvas, plan and review work on it, and turn finished designs into videos, decks, Lottie, Rive, and live interactive previews.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Keelan Miskell"
+  },
+  "license": "MIT",
+  "skills": "./skills"
+}
