@@ -1,6 +1,6 @@
 # Paper Skills
 
-Seventeen skills for designing in [Paper](https://paper.design) with an agent.
+Eighteen skills for designing in [Paper](https://paper.design) with an agent.
 
 I've been working in Paper for a while now. The MCP server is good. An agent can read your file, understand the structure, and write real nodes back to the canvas. But pointed at a design file without guidance, agents make the same handful of mistakes every time. They rebuild a component by hand in HTML instead of cloning the node you already made. They pull a color off a screenshot instead of asking for the computed value. They render a video and tell you it looks right without having looked at a single frame of it. They quietly swap your copy for lorem.
 
@@ -41,6 +41,7 @@ Grouped by which way the work is moving.
 - `product-demo` — turns an approved storyboard into a Remotion video that animates your actual frames, as JSX, using the tokens and copy already in the file.
 - `pitch-deck` — turns the same kind of storyboard into slides. One artboard per scene, each a real frame with a caption saying what it does. Exports a PDF.
 - `paper-interaction-preview` — takes selected components and builds a live HTML page where you can actually feel the hover and press states.
+- `paper-canvas-fx` — renders a real Paper frame live under [Canvas UI](https://canvasui.dev) WebGL effects (Liquid fluid, shaders) via the html-in-canvas API — the design ripples while the text stays crisp. Chrome-flag-gated; a demo/dazzle skill.
 - `paper-to-lottie` — writes Lottie JSON directly from vector elements. No Lottie editor in the loop.
 - `paper-to-rive` — rebuilds designs as Rive assets, including state machines with pointer states.
 - `paper-shaders` — works with Paper's shader fills and effects.
