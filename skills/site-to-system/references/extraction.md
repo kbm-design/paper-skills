@@ -49,7 +49,7 @@ Two layers, and the order matters both for correctness and for Paper's create or
 --color-primary: #2563EB                    ✗ flat, can't re-theme
 ```
 
-**Create order Paper wants:** semantic colors before palette colors; within each, neutrals first, then primary, secondary, accent. (Paper's `create_tokens` doc states this explicitly.) For every non-color type, smallest value first.
+**Create order — palette first, then semantic.** Paper's `create_tokens` doc *says* "semantic before palette," but that's a display-order preference and it's wrong when semantic tokens alias palette tokens: an alias (`var(--palette-indigo)`) needs its target to already exist, so **create the palette (literal values) first, then the semantic layer (aliases).** Dependency order beats display order. (Verified live: palette-first resolves; and Paper re-sorts tokens by type on read anyway, so the display preference is moot.) Within the palette, neutrals first, then primary/secondary/accent; for every non-color type, smallest value first.
 
 ## 4. Classification discipline
 
@@ -69,7 +69,7 @@ Sections, top to bottom:
 1. **Header** — source name, token counts, date.
 2. **Semantic colors** — a row of swatches, each: the color (as `var(--color-…)`), the token name, the resolved value, and the palette token it aliases.
 3. **Palette ramp** — the raw scale as chips, grouped by hue, labeled with step.
-4. **Type ramp** — every `fontSize` as a live line of sample text at its real weight/line-height, labeled with the token.
+4. **Type ramp** — every `fontSize` as a live line of sample text at its real weight/line-height, labeled with the token. Put `white-space: nowrap` on each sample line — a long sample that wraps will overlap the next row (Paper's flex rows don't always reflow the gap when a child grows to two lines).
 5. **Spacing** — bars at each `spacing` value, labeled.
 6. **Radius** — squares at each `radius`, labeled.
 7. **Components** — button (default/hover/disabled), input (rest/focus), card, badge — each built purely from tokens, so restyling a token visibly moves them.
