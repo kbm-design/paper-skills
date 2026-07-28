@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "paper",
-      "description": "Fifteen skills for the Paper MCP: canvas-views, live-components, storyboard, design-council, site-to-system, token-warden, componentize, layer-hygiene, flows, product-demo, pitch-deck, interaction-preview, to-lottie, to-rive, shaders.",
+      "description": "Seventeen skills for the Paper MCP: canvas-views, live-components, storyboard, design-council, art-direction, reality-check, site-to-system, token-warden, componentize, layer-hygiene, flows, product-demo, pitch-deck, interaction-preview, to-lottie, to-rive, shaders.",
       "source": "./",
       "category": "design"
     }

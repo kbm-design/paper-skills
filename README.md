@@ -1,6 +1,6 @@
 # Paper Skills
 
-Fifteen skills for designing in [Paper](https://paper.design) with an agent.
+Seventeen skills for designing in [Paper](https://paper.design) with an agent.
 
 I've been working in Paper for a while now. The MCP server is good. An agent can read your file, understand the structure, and write real nodes back to the canvas. But pointed at a design file without guidance, agents make the same handful of mistakes every time. They rebuild a component by hand in HTML instead of cloning the node you already made. They pull a color off a screenshot instead of asking for the computed value. They render a video and tell you it looks right without having looked at a single frame of it. They quietly swap your copy for lorem.
 
@@ -28,6 +28,8 @@ Grouped by which way the work is moving.
 
 - `storyboard` — plans a sequence of scenes as cards on the canvas, waits for you to approve it, then compiles a typed `storyboard.json`.
 - `design-council` — five reviewer personas audit a frame with measured evidence, pin their findings on the canvas, and hand back a fixed side-by-side duplicate.
+- `art-direction` — the inverse of design-council: duplicates a frame into several genuinely different, internally-consistent design directions to react to.
+- `reality-check` — floods copies of a frame with hostile real content (long strings, RTL, empty states, 47-item lists) and reports where the layout breaks.
 - `site-to-system` — extracts a design system from any site, repo, or config and materializes it as real Paper tokens plus a sticker sheet wired to them.
 - `token-warden` — audits a file for hardcoded values and near-duplicate tokens, proposes consolidations, and keeps design and code tokens in sync. Paper has no token UI, so these two are the token manager.
 - `componentize` — finds repeated elements on the canvas and extracts them into a named variant set you clone from. (Paper clones are copies, not live instances — the skill is honest about that.)
