@@ -1,6 +1,6 @@
 # Paper Skills
 
-Twelve skills for designing in [Paper](https://paper.design) with an agent.
+Fifteen skills for designing in [Paper](https://paper.design) with an agent.
 
 I've been working in Paper for a while now. The MCP server is good. An agent can read your file, understand the structure, and write real nodes back to the canvas. But pointed at a design file without guidance, agents make the same handful of mistakes every time. They rebuild a component by hand in HTML instead of cloning the node you already made. They pull a color off a screenshot instead of asking for the computed value. They render a video and tell you it looks right without having looked at a single frame of it. They quietly swap your copy for lorem.
 
@@ -30,9 +30,12 @@ Grouped by which way the work is moving.
 - `design-council` — five reviewer personas audit a frame with measured evidence, pin their findings on the canvas, and hand back a fixed side-by-side duplicate.
 - `site-to-system` — extracts a design system from any site, repo, or config and materializes it as real Paper tokens plus a sticker sheet wired to them.
 - `token-warden` — audits a file for hardcoded values and near-duplicate tokens, proposes consolidations, and keeps design and code tokens in sync. Paper has no token UI, so these two are the token manager.
+- `componentize` — finds repeated elements on the canvas and extracts them into a named variant set you clone from. (Paper clones are copies, not live instances — the skill is honest about that.)
+- `layer-hygiene` — renames cryptic layers, removes true orphans, and flattens redundant wrappers. Names and structure only, never appearance.
 
 **Out of Paper**
 
+- `flows` — wires screens into a clickable prototype: a flow map on the canvas plus a standalone clickable HTML build of the real frames. The screen-to-screen prototyping Paper lacks.
 - `product-demo` — turns an approved storyboard into a Remotion video that animates your actual frames, as JSX, using the tokens and copy already in the file.
 - `pitch-deck` — turns the same kind of storyboard into slides. One artboard per scene, each a real frame with a caption saying what it does. Exports a PDF.
 - `paper-interaction-preview` — takes selected components and builds a live HTML page where you can actually feel the hover and press states.
