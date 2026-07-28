@@ -2,6 +2,14 @@
 
 Apply only the cases that fit an element. A single-value stat doesn't get the 47-item case; a number field doesn't get RTL. Pick by what the element carries.
 
+## Constrain the copy to the production width — first, always
+
+**A stress copy must render at the same width it has in production, or the test lies.** A row that lives in a 320px panel, copied into a roomy 720px board, will *not* truncate a long name — it has space it never has in the real app, so the truncation cases silently pass. Before flooding content, read the source frame's real width (`get_node_info` / `get_computed_styles`) and give the copy exactly that — no more. The most common false-negative in this skill is a break that "didn't happen" only because the copy had room the real layout doesn't. If a container's width comes from its parent, reproduce that constraint on the copy.
+
+## Colour and other data-coupled properties
+
+`set_text_content` changes text but not the styling logic behind it. A PnL that is green for gains and red for losses will stay whatever colour the original was when you swap in a negative value — so a negative-value stress must also *check the colour*, not just overflow: should red-for-loss have fired? Flag any property that should be driven by the value but isn't visibly bound to it (sign→colour, status→badge, count→state). This is a real finding even though the static frame can't run the logic — it shows the binding was never designed.
+
 ## Text fields
 
 | case | content | catches |
