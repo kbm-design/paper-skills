@@ -46,6 +46,16 @@ Screenshot and check: could someone name the system from the result without the 
 
 This skill reuses Council's persona discipline in reverse — a Council persona *audits against* a system; an art-director persona *applies* one. Where Council cites named systems as the standard a design falls short of, Art Direction uses the same named systems as the target a direction builds toward. If a generated direction is later reviewed, Council will grade it against the very reference it claims — which is the honest test of whether the direction was really a system or just a vibe.
 
+## Extending the direction set (roadmap, not yet built)
+
+Today a direction is a whole named *style* (Restraint, Editorial…) applied at reskin depth. The natural growth path — deliberately deferred to keep the skill simple — is to let the user say *what* varies and *how far*, rather than only picking styles:
+
+- **Axis** — what each direction explores, not just its skin: `reskin` (palette/type), `layout` (composition), `density`, `hierarchy`, `imagery`. Borrowed from design-lab, whose variants each attack a different axis while holding the visual language constant. This is the lever that most controls "feels different" vs "feels in-system."
+- **Intensity** — how far a direction pushes, per taste-skill's 1–10 dials (variance / density / motion).
+- **Latitude** — whether a direction may leave the design system at all (stay-on-brand ↔ break-system).
+
+Until that exists, get spread by choosing genuinely opposite *styles* and, where tractable, varying layout/density — not just fonts and color, which for data-dense UIs is the axis that matters least.
+
 ## Log
 
 `.kbm/art-direction.md`: one entry per run — frame, the directions generated (name + reference), and which the user favored or grafted from. Over runs this records the user's taste range, so the set proposed next time leans into directions they've reacted well to without collapsing to only those.
