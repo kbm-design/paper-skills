@@ -24,6 +24,14 @@ Read the frame's current direction first, then pick departures that map the real
 - If the product has a category convention (a dev tool leans Restraint/Density; a consumer app leans Expressive), include the convention *and* a deliberate break from it, so the row shows both the safe and the surprising.
 - Don't include two directions that would resolve to nearly the same surface (Restraint and Density can collapse together on a simple frame — pick one).
 
+## Applying a direction to a real (deep) frame
+
+Restyling a duplicated real frame means targeting nodes *inside* the clone, which have new ids. Use the **`descendantIdMap`** that `duplicate_nodes` returns — it maps every original descendant id to its clone in one call, so you can locate the headline / ground / panel *once in the original* (via `find_nodes` on text, or `get_jsx`) and then style `map[originalId]` in each copy without re-querying. This is what makes deep-frame restyling practical.
+
+Restyle at the **high-impact nodes** — ground, headline, subhead, badge, panel/container treatment — not every leaf. Hitting those reads as a full system; chasing every node is slow and unnecessary. But **be honest about coverage** (`paper-craft.md` §7): if you restyled the container and headline but left the inner list rows untouched, say so — the direction is a Candidate on the parts you didn't reach, not a complete reskin.
+
+**Fixed graphics don't restyle.** A raster image, an exported SVG illustration, or a photographic fill stays constant across all directions — it can't take on each system's palette. If the frame has a dominant fixed graphic (a hero device, a screenshot), flag that it reads the same in every direction, or steer to a frame without one. A brutalist direction with a glowing full-color illustration in the middle is a coherence tell you should name, not hide.
+
 ## Applying a direction as a system
 
 For each copy, move all four axes together:

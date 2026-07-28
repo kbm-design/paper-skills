@@ -126,6 +126,14 @@ Never present an inferred value as canon. The systems this discipline comes from
 - Images must be publicly-reachable URLs; use them sparingly in annotations (prefer pure HTML/CSS shapes).
 - Everything gets `box-sizing: border-box`; inputs become frames with text children.
 
+## 9b. Ordering nodes (move_nodes quirk)
+
+`move_nodes` is unreliable for placing a child at a specific position in a **flex parent**: `before`, `after`, and `parentId`+`index` have all been observed to push the moved node to the **end** instead (e.g. `index: 2` and `before: X` both resolving to the last slot). Do not trust a single positional move to reorder.
+
+**Reliable pattern:** to set a specific child order, issue ONE `move_nodes` batch that moves *every* child in the desired final order using just `{nodeId, parentId}` (no `before`/`after`/`index`). Each move appends to the end, so the batch order becomes the final order.
+
+Corollary: `duplicate_nodes({parentId})` does **not** append at the end the way `write_html` insert-children does — so building an interleaved layout (label, item, label, item…) by alternating `duplicate_nodes` and `write_html` will scramble. Create everything first, then reorder with the append-in-order batch above.
+
 ## 10. Memory files
 
 KBM skills that run repeatedly on the same file keep their memory in plain, human-editable files in the working directory, under `.kbm/` — not hidden inside the Paper file. Why: a visible file is diffable, greppable, editable by the user (changing a status by hand is a first-class way to give the skill instructions), readable by scheduled runs, and survives canvas cleanups.
